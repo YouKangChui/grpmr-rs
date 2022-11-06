@@ -208,7 +208,7 @@ pub async fn unban(cx: &Cxt) -> TgErr<()> {
     let db = get_mdb().await;
     let (user_id, _text) = extract_text_id_from_reply(cx).await;
     if user_id.is_none() {
-        cx.reply_to("No user was targeted").await?;
+        cx.reply_to("请以/unban回复解封对象发出的消息来执行指令").await?;
         return Ok(());
     }
 
@@ -218,11 +218,11 @@ pub async fn unban(cx: &Cxt) -> TgErr<()> {
         .await
     {
         if !mem.is_banned() {
-            cx.reply_to("This user is already unbanned!").await?;
+            cx.reply_to("然而他本来就没被封禁").await?;
             return Ok(());
         }
     } else {
-        cx.reply_to("I can't seem to get the info of the user")
+        cx.reply_to("获取解封对象信息失败，请尝试直接回复解封对象发出的原始消息而非转发后回复")
             .await?;
         return Ok(());
     }
@@ -230,7 +230,7 @@ pub async fn unban(cx: &Cxt) -> TgErr<()> {
     cx.requester
         .unban_chat_member(cx.chat_id(), user_id.unwrap())
         .await?;
-    cx.reply_to("<b>Unbanned!</b>")
+    cx.reply_to("<b>已解封</b>")
         .parse_mode(ParseMode::Html)
         .await?;
 
@@ -266,17 +266,17 @@ pub async fn kick(cx: &Cxt) -> TgErr<()> {
     let bot_id = get_bot_id(cx).await;
     let (user_id, text) = extract_text_id_from_reply(cx).await;
     if user_id.is_none() {
-        cx.reply_to("No user was targeted").await?;
+        cx.reply_to("请以/kick回复踢出对象发出的消息来执行指令").await?;
         return Ok(());
     }
     if user_id.unwrap() == bot_id {
-        cx.reply_to("I am not gonna kick myself fella! Try using your brain next time!")
+        cx.reply_to("#查询精神状态")
             .await?;
         return Ok(());
     }
 
     if user_id.unwrap() == *OWNER_ID || (*SUDO_USERS).contains(&user_id.unwrap()) {
-        cx.reply_to("I am not gonna kick my owner or one of my sudo users")
+        cx.reply_to("失败了失败了失败了失败了失败了")
             .await?;
         return Ok(());
     }
@@ -286,15 +286,15 @@ pub async fn kick(cx: &Cxt) -> TgErr<()> {
         .await
     {
         if mem.is_banned() || mem.is_left() {
-            cx.reply_to("This user is already gone mate!").await?;
+            cx.reply_to("他已经不在群里了，如果要阻止他回来请用/ban").await?;
             return Ok(());
         }
         if !mem.can_be_edited() {
-            cx.reply_to("I am not gonna kick an Admin Here!").await?;
+            cx.reply_to("你先想办法把他管理员撤了").await?;
             return Ok(());
         }
     } else {
-        cx.reply_to("I can't seem to get info for this user")
+        cx.reply_to("获取封禁对象信息失败，请尝试直接回复封禁对象发出的原始消息而非转发后回复")
             .await?;
         return Ok(());
     };
@@ -306,7 +306,7 @@ pub async fn kick(cx: &Cxt) -> TgErr<()> {
         .user;
     let reason = text.unwrap_or_else(|| String::from("None"));
     let kick_text = format!(
-        "<b>Kicked</b>\n<b>User:</b>{}\n\n<i>Reason:</i> {}",
+        "<b>已踢出</b>\n<b>用户:</b>{}\n\n<i>理由:</i> {}",
         user_mention_or_link(&user),
         reason
     );
@@ -348,20 +348,20 @@ pub async fn kickme(cx: &Cxt, cmd: &str) -> TgErr<()> {
     if let Some(user) = cx.update.from() {
         let user_id = user.id;
         if user_id == *OWNER_ID || (*SUDO_USERS).contains(&user_id) {
-            cx.reply_to("You are my owner or one of my sudo users mate I can't kick you")
+            cx.reply_to("您还是自己退群吧")
                 .await?;
             return Ok(());
         }
         if let Ok(mem) = cx.requester.get_chat_member(cx.chat_id(), user_id).await {
             if !mem.can_be_edited() {
-                cx.reply_to("I am not gonna kick an Admin Here!").await?;
+                cx.reply_to("你先想办法把他管理员撤了").await?;
                 return Ok(());
             }
         } else {
             cx.reply_to("Can't kick the user").await?;
             return Ok(());
         }
-        let kickme_text = format!("<b>Piss off {}</b>", user_mention_or_link(user));
+        let kickme_text = format!("<b>如你所愿{}</b>", user_mention_or_link(user));
         cx.requester.kick_chat_member(cx.chat_id(), user_id).await?;
         cx.requester
             .unban_chat_member(cx.chat_id(), user_id)
@@ -381,7 +381,7 @@ pub async fn kickme(cx: &Cxt, cmd: &str) -> TgErr<()> {
             send_log(cx, &logm, l).await?;
         }
     } else {
-        cx.reply_to("Can't get the info about the user").await?;
+        cx.reply_to("获取封禁对象信息失败，请尝试直接回复封禁对象发出的原始消息而非转发后回复").await?;
     }
     Ok(())
 }
