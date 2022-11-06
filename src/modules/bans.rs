@@ -51,10 +51,10 @@ pub async fn ban(cx: &Cxt) -> TgErr<()> {
             cx.reply_to("此人已被封禁，无需重复操作").await?;
             return Ok(());
         }
-        if mem.user_is_admin() {
-            cx.reply_to("你先想办法把他管理员撤了").await?;
-            return Ok(());
-        }
+     //   if mem.user_is_admin() {
+       //     cx.reply_to("你先想办法把他管理员撤了").await?;
+      //      return Ok(());
+    //    }
     } else {
         cx.reply_to("获取封禁对象信息失败，请尝试直接回复封禁对象发出的原始消息而非转发后回复")
             .await?;
@@ -133,10 +133,10 @@ pub async fn temp_ban(cx: &Cxt) -> TgErr<()> {
         .get_chat_member(cx.chat_id(), user_id.unwrap())
         .await
     {
-        if !mem.can_be_edited() {
-            cx.reply_to("你先想办法把他管理员撤了").await?;
-            return Ok(());
-        }
+    //    if !mem.can_be_edited() {
+        //    cx.reply_to("你先想办法把他管理员撤了").await?;
+      //      return Ok(());
+    //    }
 
         if mem.is_banned() {
             cx.reply_to("此人已被封禁，无需重复操作").await?;
@@ -289,10 +289,10 @@ pub async fn kick(cx: &Cxt) -> TgErr<()> {
             cx.reply_to("他已经不在群里了，如果要阻止他回来请用/ban").await?;
             return Ok(());
         }
-        if !mem.can_be_edited() {
-            cx.reply_to("你先想办法把他管理员撤了").await?;
-            return Ok(());
-        }
+ //       if !mem.can_be_edited() {
+    //        cx.reply_to("你先想办法把他管理员撤了").await?;
+  //          return Ok(());
+     //   }
     } else {
         cx.reply_to("获取封禁对象信息失败，请尝试直接回复封禁对象发出的原始消息而非转发后回复")
             .await?;
@@ -353,10 +353,10 @@ pub async fn kickme(cx: &Cxt, cmd: &str) -> TgErr<()> {
             return Ok(());
         }
         if let Ok(mem) = cx.requester.get_chat_member(cx.chat_id(), user_id).await {
-            if !mem.can_be_edited() {
-                cx.reply_to("你先想办法把他管理员撤了").await?;
-                return Ok(());
-            }
+      //      if !mem.can_be_edited() {
+      //          cx.reply_to("你先想办法把他管理员撤了").await?;
+     //           return Ok(());
+   //         }
         } else {
             cx.reply_to("Can't kick the user").await?;
             return Ok(());
