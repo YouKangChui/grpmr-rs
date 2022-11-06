@@ -51,7 +51,7 @@ pub async fn ban(cx: &Cxt) -> TgErr<()> {
             cx.reply_to("此人已被封禁，无需重复操作").await?;
             return Ok(());
         }
-        if mem.can_manage_chat() {
+        if !mem.can_manage_chat() {
             cx.reply_to("你先想办法把他管理员撤了").await?;
             return Ok(());
         }
