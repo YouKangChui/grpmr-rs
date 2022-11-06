@@ -28,17 +28,17 @@ pub async fn ban(cx: &Cxt) -> TgErr<()> {
     let (user_id, text) = extract_text_id_from_reply(cx).await;
     let reason = text.unwrap_or_else(|| String::from("None"));
     if user_id.is_none() {
-        cx.reply_to("No user was targeted").await?;
+        cx.reply_to("请以/ban回复封禁对象发出的消息来执行指令").await?;
         return Ok(());
     }
     if user_id.unwrap() == bot_id {
-        cx.reply_to("I am not gonna ban myself fella! Try using your brain next time!")
+        cx.reply_to("#查询精神状态")
             .await?;
         return Ok(());
     }
 
     if user_id.unwrap() == *OWNER_ID || (*SUDO_USERS).contains(&user_id.unwrap()) {
-        cx.reply_to("I am not gonna ban my owner or my sudo users")
+        cx.reply_to("失败了失败了失败了失败了失败了")
             .await?;
         return Ok(());
     }
@@ -48,15 +48,15 @@ pub async fn ban(cx: &Cxt) -> TgErr<()> {
         .await
     {
         if mem.is_banned() {
-            cx.reply_to("This user is already banned here!").await?;
+            cx.reply_to("此人已被封禁，无需重复操作").await?;
             return Ok(());
         }
         if !mem.can_be_edited() {
-            cx.reply_to("I am not gonna ban an Admin Here!").await?;
+            cx.reply_to("你先想办法把他管理员撤了").await?;
             return Ok(());
         }
     } else {
-        cx.reply_to("I can't seem to get info for this user")
+        cx.reply_to("获取封禁对象信息失败，请尝试直接回复封禁对象发出的原始消息而非转发后回复")
             .await?;
         return Ok(());
     };
@@ -67,7 +67,7 @@ pub async fn ban(cx: &Cxt) -> TgErr<()> {
         .unwrap()
         .user;
     let ban_text = format!(
-        "<b>Banned</b>\n<b>User:</b>{}\n\n<i>Reason:</i> {}",
+        "<b>执行封禁</b>\n<b>用户:</b>{}\n\n<i>理由:</i> {}",
         user_mention_or_link(&user),
         reason
     );
@@ -108,22 +108,22 @@ pub async fn temp_ban(cx: &Cxt) -> TgErr<()> {
     let bot_id = get_bot_id(cx).await;
     let db = get_mdb().await;
     if user_id.is_none() {
-        cx.reply_to("No user was targetted").await?;
+        cx.reply_to("请以/tban回复封禁对象发出的消息来执行指令").await?;
         return Ok(());
     }
 
     if text.is_none() {
-        cx.reply_to("Mention muting time in s,m,h,d").await?;
+        cx.reply_to("请指定临时封禁时间，可使用s（秒）m（分）h（时）d（天），永久封禁请直接用/ban").await?;
         return Ok(());
     }
 
     if user_id.unwrap() == bot_id {
-        cx.reply_to("I am not gonna ban myself fella! Try using your brain next time!")
+        cx.reply_to("#查询精神状态")
             .await?;
         return Ok(());
     }
     if user_id.unwrap() == *OWNER_ID || (*SUDO_USERS).contains(&user_id.unwrap()) {
-        cx.reply_to("I am not gonna ban my owner or my sudo users")
+        cx.reply_to("失败了失败了失败了失败了失败了")
             .await?;
         return Ok(());
     }
@@ -134,28 +134,28 @@ pub async fn temp_ban(cx: &Cxt) -> TgErr<()> {
         .await
     {
         if !mem.can_be_edited() {
-            cx.reply_to("I am not gonna ban an admin here").await?;
+            cx.reply_to("你先想办法把他管理员撤了").await?;
             return Ok(());
         }
 
         if mem.is_banned() {
-            cx.reply_to("This user is already banned").await?;
+            cx.reply_to("此人已被封禁，无需重复操作").await?;
             return Ok(());
         }
 
         if sudo_or_owner_filter(user_id.unwrap()).await.is_ok() {
-            cx.reply_to("This user is either my owner or my sudo user I am not gonna ban him")
+            cx.reply_to("失败了失败了失败了失败了失败了")
                 .await?;
             return Ok(());
         }
 
         if user_id.unwrap() == get_bot_id(cx).await {
-            cx.reply_to("I am not gonna ban myself you idiot!").await?;
+            cx.reply_to("#查询精神状态").await?;
             return Ok(());
         }
         let u = text.unwrap().parse::<TimeUnit>();
         if u.is_err() {
-            cx.reply_to("Please specify with proper unit: s,m,h,d")
+            cx.reply_to("请指定临时封禁时间，可使用s（秒）m（分）h（时）d（天），永久封禁请直接用/ban")
                 .await?;
             return Ok(());
         }
@@ -169,7 +169,7 @@ pub async fn temp_ban(cx: &Cxt) -> TgErr<()> {
                 ) + t,
             )
             .await?;
-        cx.reply_to(format!("<b>Banned for <i>{}</i></b> ", u.as_ref().unwrap()))
+        cx.reply_to(format!("<b>已封禁<i>{}</i></b> ", u.as_ref().unwrap()))
             .parse_mode(ParseMode::Html)
             .await?;
         if let Some(l) = get_log_channel(&db, cx.chat_id()).await? {
@@ -183,7 +183,7 @@ pub async fn temp_ban(cx: &Cxt) -> TgErr<()> {
                 .get_chat_member(cx.chat_id(), user_id.unwrap())
                 .await?;
             let logm = format!(
-                "Chat title: {}\n#TEMP_BANNED\nAdmin: {}\nUser: {}\n Until: {}\n",
+                "Chat title: {}\n#TEMP_BANNED\n操作者: {}\n被封禁者: {}\n 解除时间: {}\n",
                 html::code_inline(&get_chat_title(cx, cx.chat_id()).await.unwrap()),
                 html::user_mention(admin.id, &admin.full_name()),
                 html::user_mention(user_id.unwrap(), &mem.user.full_name()),
@@ -192,7 +192,7 @@ pub async fn temp_ban(cx: &Cxt) -> TgErr<()> {
             send_log(cx, &logm, l).await?;
         }
     } else {
-        cx.reply_to("Can't get this user maybe he's not in the group or he deleted his account")
+        cx.reply_to("获取封禁对象信息失败，请尝试直接回复封禁对象发出的原始消息而非转发后回复")
             .await?;
     }
 
