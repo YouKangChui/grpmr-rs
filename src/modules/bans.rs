@@ -12,7 +12,7 @@ use crate::{
     modules::send_log,
     util::{
         check_command_disabled, extract_text_id_from_reply, get_bot_id, get_chat_title, get_time,
-        is_group, sudo_or_owner_filter, user_should_restrict, TimeUnit,
+        is_group, sudo_or_owner_filter, user_is_admin, user_should_restrict, TimeUnit,
     },
     Cxt, TgErr, OWNER_ID, SUDO_USERS,
 };
@@ -51,7 +51,7 @@ pub async fn ban(cx: &Cxt) -> TgErr<()> {
             cx.reply_to("此人已被封禁，无需重复操作").await?;
             return Ok(());
         }
-        if !mem.can_manage_chat() {
+        if mem.user_is_admin() {
             cx.reply_to("你先想办法把他管理员撤了").await?;
             return Ok(());
         }
