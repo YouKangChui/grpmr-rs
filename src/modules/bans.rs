@@ -12,7 +12,7 @@ use crate::{
     modules::send_log,
     util::{
         check_command_disabled, extract_text_id_from_reply, get_bot_id, get_chat_title, get_time,
-        is_group, sudo_or_owner_filter, user_is_admin, user_should_restrict, TimeUnit,
+        is_group, sudo_or_owner_filter, user_should_restrict, TimeUnit,
     },
     Cxt, TgErr, OWNER_ID, SUDO_USERS,
 };
