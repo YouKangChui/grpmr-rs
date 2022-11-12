@@ -1,6 +1,6 @@
 FROM rustlang/rust:nightly
 
-WORKDIR /app
+WORKDIR /workspace
 COPY . .
 
 RUN cargo build --release
