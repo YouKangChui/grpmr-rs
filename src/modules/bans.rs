@@ -256,7 +256,7 @@ pub async fn unban(cx: &Cxt) -> TgErr<()> {
     Ok(())
 }
 
-pub async fn kick(cx: &Cxt) -> TgErr<()> {
+/* pub async fn kick(cx: &Cxt) -> TgErr<()> {
     tokio::try_join!(
         is_group(cx),                                           //Should be a group
         user_should_restrict(cx, get_bot_id(cx).await),         //Bot Should have restrict rights
@@ -337,7 +337,7 @@ pub async fn kick(cx: &Cxt) -> TgErr<()> {
         send_log(cx, &logm, l).await?;
     }
     Ok(())
-}
+} */
 pub async fn kickme(cx: &Cxt, cmd: &str) -> TgErr<()> {
     tokio::try_join!(
         is_group(cx),
