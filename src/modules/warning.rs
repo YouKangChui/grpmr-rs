@@ -35,13 +35,13 @@ pub async fn warn_user(cx: &Cxt, id: i64, reason: String) -> TgErr<()> {
     let bot_id = get_bot_id(cx).await;
     let db = get_mdb().await;
     if id == bot_id {
-        cx.reply_to("I am not gonna warn myself fella! Try using your brain next time!")
+        cx.reply_to("#查询精神状态")
             .await?;
         return Ok(());
     }
 
     if is_user_admin(cx, id).await {
-        cx.reply_to("I am not gonna warn an admin here!").await?;
+        cx.reply_to("你先想办法把他管理员撤了").await?;
         return Ok(());
     }
     let w_count = get_warn_count(&db, cx.chat_id(), id).await?;
@@ -59,14 +59,14 @@ pub async fn warn_user(cx: &Cxt, id: i64, reason: String) -> TgErr<()> {
             if mode {
                 cx.requester.unban_chat_member(cx.chat_id(), id).await?;
                 cx.reply_to(format!(
-                    "That's it get out ({}\\{}) warns, User has been kicked!",
+                    "警告次数达到({}/{})，已自动踢出",
                     &w_count + 1,
                     &lim
                 ))
                 .await?;
             } else {
                 cx.reply_to(format!(
-                    "That's it get out ({}\\{}) warns, User has been banned!",
+                    "警告次数达到({}/{}),已自动封禁",
                     &w_count + 1,
                     &lim
                 ))
@@ -76,10 +76,10 @@ pub async fn warn_user(cx: &Cxt, id: i64, reason: String) -> TgErr<()> {
             return Ok(());
         }
         let rm_warn_data = format!("rm_warn({},{})", cx.chat_id(), id);
-        let warn_button = InlineKeyboardButton::callback("Remove Warn".to_string(), rm_warn_data);
+        let warn_button = InlineKeyboardButton::callback("取消警告（仅限管理员）".to_string(), rm_warn_data);
         insert_warn(&db, warn).await?;
         cx.reply_to(format!(
-            "Warned {}({}\\{})\nReason:{}",
+            "{}，管理员对你作出第{}/{}次警告，原因（如有）：{}",
             user_mention_or_link(&mem.user),
             &w_count + 1,
             &lim,
@@ -113,7 +113,7 @@ pub async fn handle_unwarn_button(cx: &Ctx) -> TgErr<()> {
                     .edit_message_text(
                         chat_id,
                         cx.update.message.clone().unwrap().id,
-                        "Warn is alredy removed",
+                        "警告已撤销",
                     )
                     .await?;
                 return Ok(());
@@ -123,7 +123,7 @@ pub async fn handle_unwarn_button(cx: &Ctx) -> TgErr<()> {
                 .edit_message_text(
                     chat_id,
                     cx.update.message.clone().unwrap().id,
-                    format!("Warn Removed by {}", user_mention_or_link(&cx.update.from)),
+                    format!("警告已被管理员 {} 撤销", user_mention_or_link(&cx.update.from)),
                 )
                 .await?;
         } else {
