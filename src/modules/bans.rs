@@ -67,7 +67,7 @@ pub async fn ban(cx: &Cxt) -> TgErr<()> {
         .unwrap()
         .user;
     let ban_text = format!(
-        "已封禁{}，原因（如有）：{}",
+        "已封禁 {} ，原因（如有）：{}",
         user_mention_or_link(&user),
         reason
     );
@@ -361,7 +361,7 @@ pub async fn kickme(cx: &Cxt, cmd: &str) -> TgErr<()> {
             cx.reply_to("Can't kick the user").await?;
             return Ok(());
         }
-        let kickme_text = format!("如你所愿，{}再见", user_mention_or_link(user));
+        let kickme_text = format!("如你所愿， {} 再见", user_mention_or_link(user));
         cx.requester.kick_chat_member(cx.chat_id(), user_id).await?;
         cx.requester
             .unban_chat_member(cx.chat_id(), user_id)
