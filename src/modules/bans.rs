@@ -67,7 +67,7 @@ pub async fn ban(cx: &Cxt) -> TgErr<()> {
         .unwrap()
         .user;
     let ban_text = format!(
-        "<b>执行封禁</b>\n<b>用户:</b>{}\n\n<i>理由:</i> {}",
+        "已封禁{}，原因（如有）：{}",
         user_mention_or_link(&user),
         reason
     );
@@ -98,7 +98,7 @@ pub async fn ban(cx: &Cxt) -> TgErr<()> {
     Ok(())
 }
 
-pub async fn temp_ban(cx: &Cxt) -> TgErr<()> {
+/* pub async fn temp_ban(cx: &Cxt) -> TgErr<()> {
     tokio::try_join!(
         is_group(cx),                                           //Should be a group
         user_should_restrict(cx, get_bot_id(cx).await),         //Bot Should have restrict rights
@@ -197,7 +197,7 @@ pub async fn temp_ban(cx: &Cxt) -> TgErr<()> {
     }
 
     Ok(())
-}
+} */
 
 pub async fn unban(cx: &Cxt) -> TgErr<()> {
     tokio::try_join!(
@@ -230,7 +230,7 @@ pub async fn unban(cx: &Cxt) -> TgErr<()> {
     cx.requester
         .unban_chat_member(cx.chat_id(), user_id.unwrap())
         .await?;
-    cx.reply_to("<b>已解封</b>")
+    cx.reply_to("已解封")
         .parse_mode(ParseMode::Html)
         .await?;
 
@@ -306,7 +306,7 @@ pub async fn kick(cx: &Cxt) -> TgErr<()> {
         .user;
     let reason = text.unwrap_or_else(|| String::from("None"));
     let kick_text = format!(
-        "<b>已踢出</b>\n<b>用户:</b>{}\n\n<i>理由:</i> {}",
+        "已踢出{}，原因（如有）：{}",
         user_mention_or_link(&user),
         reason
     );
@@ -361,7 +361,7 @@ pub async fn kickme(cx: &Cxt, cmd: &str) -> TgErr<()> {
             cx.reply_to("Can't kick the user").await?;
             return Ok(());
         }
-        let kickme_text = format!("<b>如你所愿{}</b>", user_mention_or_link(user));
+        let kickme_text = format!("如你所愿，{}再见", user_mention_or_link(user));
         cx.requester.kick_chat_member(cx.chat_id(), user_id).await?;
         cx.requester
             .unban_chat_member(cx.chat_id(), user_id)
