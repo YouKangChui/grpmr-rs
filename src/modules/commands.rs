@@ -5,8 +5,8 @@ pub enum Command {
     #[command(description = "Ban a user")]
     Ban,
     #[command(description = "Bans a user for sometime")]
-    Tban,
-    #[command(description = "Unbans a user")]
+  //  Tban,
+//    #[command(description = "Unbans a user")]
     Unban,
     #[command(description = "Mute a user")]
     Mute,
@@ -19,8 +19,8 @@ pub enum Command {
     #[command(description = "Helps with available commands")]
     Help,
     #[command(description = "Kick a user from the group")]
-    Kick,
-    #[command(description = "Sends info about a user")]
+//    Kick,
+//    #[command(description = "Sends info about a user")]
     Info,
     #[command(description = "Send's user's or chat's ID")]
     Id,
