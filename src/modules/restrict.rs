@@ -48,7 +48,7 @@ pub async fn temp_mute(cx: &Cxt) -> TgErr<()> {
     if user_id.unwrap() == *OWNER_ID || (*SUDO_USERS).contains(&user_id.unwrap()) {
         cx.reply_to("I am not gonna mute my owner or my sudo users")
             .await?;
-        return Ok(());
+    return Ok(());
     }
 
     if let Ok(mem) = cx
@@ -56,10 +56,10 @@ pub async fn temp_mute(cx: &Cxt) -> TgErr<()> {
         .get_chat_member(cx.chat_id(), user_id.unwrap())
         .await
     {
-        if !mem.can_be_edited() {
-            cx.reply_to("I am not gonna mute an admin here").await?;
-            return Ok(());
-        }
+    //   if !mem.can_be_edited() {
+    //        cx.reply_to("I am not gonna mute an admin here").await?;
+   //         return Ok(());
+    //    }
 
         if mem.is_banned() || mem.is_left() {
             cx.reply_to(
@@ -153,10 +153,10 @@ pub async fn mute(cx: &Cxt) -> TgErr<()> {
         .get_chat_member(cx.chat_id(), user_id.unwrap())
         .await
     {
-        if !mem.can_be_edited() {
-            cx.reply_to("I am not gonna mute an Admin Here!").await?;
-            return Ok(());
-        }
+  //      if !mem.can_be_edited() {
+    //        cx.reply_to("I am not gonna mute an Admin Here!").await?;
+    //        return Ok(());
+   //     }
     } else {
         cx.reply_to("I can't seem to get info for this user")
             .await?;
