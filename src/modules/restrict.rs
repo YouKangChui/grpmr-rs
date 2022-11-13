@@ -174,7 +174,7 @@ pub async fn mute(cx: &Cxt) -> TgErr<()> {
     }
     let reason = text.unwrap_or_else(|| String::from("None"));
     let mute_text = format!(
-        "已禁言{}，原因（如有）：{}",
+        "已禁言 {} ，原因（如有）：{}",
         user_mention_or_link(&user),
         reason
     );
