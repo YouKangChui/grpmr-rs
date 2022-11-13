@@ -59,14 +59,14 @@ pub async fn warn_user(cx: &Cxt, id: i64, reason: String) -> TgErr<()> {
             if mode {
                 cx.requester.unban_chat_member(cx.chat_id(), id).await?;
                 cx.reply_to(format!(
-                    "警告次数达到({}/{})，已自动踢出",
+                    "警告次数达到{}/{}，已自动踢出",
                     &w_count + 1,
                     &lim
                 ))
                 .await?;
             } else {
                 cx.reply_to(format!(
-                    "警告次数达到({}/{}),已自动封禁",
+                    "警告次数达到{}/{}，已自动封禁",
                     &w_count + 1,
                     &lim
                 ))
