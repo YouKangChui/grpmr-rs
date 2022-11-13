@@ -18,9 +18,9 @@ pub enum Command {
     Start,
     #[command(description = "Helps with available commands")]
     Help,
-    #[command(description = "Kick a user from the group")]
+  //  #[command(description = "Kick a user from the group")]
 //    Kick,
-//    #[command(description = "Sends info about a user")]
+   #[command(description = "Sends info about a user")]
     Info,
     #[command(description = "Send's user's or chat's ID")]
     Id,
