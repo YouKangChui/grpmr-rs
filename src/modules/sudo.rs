@@ -89,16 +89,16 @@ pub async fn gban(cx: &Cxt) -> TgErr<()> {
         reason: reason.clone(),
     };
     if (*SUDO_USERS).contains(&user_id.unwrap()) {
-        cx.reply_to("I am not gonna ban a sudo user").await?;
+        cx.reply_to("失败了失败了失败了失败了失败了").await?;
         return Ok(());
     }
     if user_id.unwrap() == *OWNER_ID {
-        cx.reply_to("I am not gonna gban my owner of all people")
+        cx.reply_to("给我沙丁鱼罐头！！！！！！！！！！")
             .await?;
         return Ok(());
     }
     if user_id.unwrap() == get_bot_id(cx).await {
-        cx.reply_to("Haha I am not gonna ban myself fuck off!")
+        cx.reply_to("#查询精神状态")
             .await?;
         return Ok(());
     }
@@ -129,7 +129,7 @@ pub async fn gban(cx: &Cxt) -> TgErr<()> {
         }
     }
     cx.requester
-        .edit_message_text(cx.chat_id(), msg.id, "Gbanned the fucker")
+        .edit_message_text(cx.chat_id(), msg.id, "Gbanned")
         .await?;
     Ok(())
 }
@@ -159,7 +159,7 @@ pub async fn ungban(cx: &Cxt) -> TgErr<()> {
     if is_gbanned(&db, &user_id.unwrap()).await? {
         ungban_user(&db, &user_id.unwrap()).await?;
         let chats = get_all_chats(&db).await?;
-        let msg = cx.reply_to("Ungbanning the poor fucker").await?;
+        let msg = cx.reply_to("Ungbanned").await?;
         for c in chats {
             if let Ok(mem) = cx.requester.get_chat_member(c, user_id.unwrap()).await {
                 if mem.is_banned()
