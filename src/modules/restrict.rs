@@ -35,18 +35,18 @@ pub async fn temp_mute(cx: &Cxt) -> TgErr<()> {
     }
 
     if text.is_none() {
-        cx.reply_to("Mention muting time in s,m,h,d").await?;
+        cx.reply_to("请指定禁言时间，可用s（秒）m（分）h（时）d（天），如/tmute 1h为禁言一小时").await?;
         return Ok(());
     }
 
     if user_id.unwrap() == bot_id {
-        cx.reply_to("I am not gonna mute myself fella! Try using your brain next time!")
+        cx.reply_to("#查询精神状态")
             .await?;
         return Ok(());
     }
 
     if user_id.unwrap() == *OWNER_ID || (*SUDO_USERS).contains(&user_id.unwrap()) {
-        cx.reply_to("I am not gonna mute my owner or my sudo users")
+        cx.reply_to("失败了失败了失败了失败了失败了")
             .await?;
     return Ok(());
     }
@@ -63,24 +63,24 @@ pub async fn temp_mute(cx: &Cxt) -> TgErr<()> {
 
         if mem.is_banned() || mem.is_left() {
             cx.reply_to(
-                "This user is either left of banned from here there's no point of muting him",
+                "禁言对象已不在本群",
             )
             .await?;
             return Ok(());
         }
         if sudo_or_owner_filter(user_id.unwrap()).await.is_ok() {
-            cx.reply_to("This user is either my owner or my sudo user I am not gonna mute him")
+            cx.reply_to("失败了失败了失败了失败了失败了")
                 .await?;
             return Ok(());
         }
 
         if user_id.unwrap() == get_bot_id(cx).await {
-            cx.reply_to("I am not gonna mute myself you idiot!").await?;
+            cx.reply_to("#查询精神状态").await?;
             return Ok(());
         }
         let u = text.unwrap().parse::<TimeUnit>();
         if u.is_err() {
-            cx.reply_to("Please specify with proper unit: s,m,h,d")
+            cx.reply_to("请指定禁言时间，可用s（秒）m（分）h（时）d（天），如/tmute 1h为禁言一小时")
                 .await?;
             return Ok(());
         }
@@ -94,7 +94,7 @@ pub async fn temp_mute(cx: &Cxt) -> TgErr<()> {
                 ) + t,
             )
             .await?;
-        cx.reply_to(format!("<b>Muted for <i>{}</i></b> ", u.as_ref().unwrap()))
+        cx.reply_to(format!("已禁言，禁言时长{}", u.as_ref().unwrap()))
             .parse_mode(ParseMode::Html)
             .await?;
         if let Some(l) = get_log_channel(&db, cx.chat_id()).await? {
@@ -138,13 +138,13 @@ pub async fn mute(cx: &Cxt) -> TgErr<()> {
         return Ok(());
     }
     if user_id.unwrap() == bot_id {
-        cx.reply_to("I am not gonna mute myself fella! Try using your brain next time!")
+        cx.reply_to("#查询精神状态")
             .await?;
         return Ok(());
     }
 
     if user_id.unwrap() == *OWNER_ID || (*SUDO_USERS).contains(&user_id.unwrap()) {
-        cx.reply_to("I am not gonna mute my owner or one of my sudo users")
+        cx.reply_to("失败了失败了失败了失败了失败了")
             .await?;
         return Ok(());
     }
@@ -169,12 +169,12 @@ pub async fn mute(cx: &Cxt) -> TgErr<()> {
         .unwrap()
         .user;
     if can_send_text(cx, user_id.unwrap()).await? {
-        cx.reply_to("User is already restricted").await?;
+        cx.reply_to("此人已被禁言，无需重复操作").await?;
         return Ok(());
     }
     let reason = text.unwrap_or_else(|| String::from("None"));
     let mute_text = format!(
-        "<b>Muted</b>\n<b>User:</b>{}\n\n<i>Reason:</i> {}",
+        "已禁言{}，原因（如有）：{}",
         user_mention_or_link(&user),
         reason
     );
@@ -231,13 +231,13 @@ pub async fn unmute(cx: &Cxt) -> TgErr<()> {
         return Ok(());
     }
     if !is_user_restricted(cx, user_id.unwrap()).await? {
-        cx.reply_to("This user can already talk!").await?;
+        cx.reply_to("已解除禁言，无需重复操作").await?;
         return Ok(());
     }
     cx.requester
         .restrict_chat_member(cx.chat_id(), user_id.unwrap(), perm)
         .await?;
-    cx.reply_to("<b>Unmuted</b>")
+    cx.reply_to("已解除禁言")
         .parse_mode(ParseMode::Html)
         .await?;
     Ok(())
