@@ -18,7 +18,7 @@ jobs:
           # (optional) Path to changelog.
           
           # (required) GitHub token for creating GitHub Releases.
-          token: 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
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   upload-assets:
     runs-on: ubuntu-latest
@@ -30,5 +30,5 @@ jobs:
           # Note that glob pattern is not supported yet.
           bin: testtest
           # (required) GitHub token for uploading assets to GitHub Releases.
-          token: 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
+          token: ${{ secrets.GITHUB_TOKEN }}
 
