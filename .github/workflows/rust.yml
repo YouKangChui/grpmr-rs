@@ -1,4 +1,6 @@
-on: [push,pull_request]
+on: 
+issue_comment:
+    types: [created, deleted]
 
 name: CI
 
