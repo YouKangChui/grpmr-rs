@@ -1,6 +1,6 @@
-on: 
-issue_comment:
-    types: [created, deleted]
+on: [push]
+
+
 
 name: CI
 
